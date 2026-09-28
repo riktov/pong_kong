@@ -347,6 +347,6 @@ function keyPressed() {
   }	
 
   if(isRecording) {
-    saveGif('my-animation', 240, { units: 'frames' });
+    // saveGif('my-animation', 240, { units: 'frames' });
   }
 }
