@@ -21,6 +21,7 @@ let COLOR_LAND ;
 let COLOR_SEA ;
 let isFlatColor = false ;     
 let isShowBalls = true ;
+let isShowBlocks = true ;
 let isRecording = true ;
 
 let img ; 
@@ -98,7 +99,9 @@ function draw() {
 	fill(255) ;
 	noStroke() ;
 
-	drawAllBlocks() ;
+  if(isShowBlocks) {
+    drawAllBlocks() ;
+  }
 	
 	if(isShowBalls) {
 		balls.forEach(b => {
@@ -338,6 +341,9 @@ function keyPressed() {
       break ;
     case 'c':
       isFlatColor = !isFlatColor ;
+      break ;
+    case 'b':
+      isShowBlocks = !isShowBlocks ;
       break ;
     case 'r':
       isRecording = !isRecording ;
