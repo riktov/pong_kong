@@ -4,17 +4,30 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sketch</title>
+    <title>Pong Kong</title>
 
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="sketch.css">
 
     <script src="https://cdn.jsdelivr.net/npm/p5@1/lib/p5.min.js"></script>
+
+		<link id="shortcut_icon" type="image/x-icon" rel="shortcut icon" href="">
   </head>
 
   <body>
     <script src="ball.js"></script>
     <script src="utility.js"></script>
-    
+    <script src="favicon.js"></script>
+
     <script src="sketch.js"></script>
+
+    <div class="Guidance">
+      <dl>
+        <dt>V</dt><dd>toggle ball visibility</dd>
+        <dt>C</dt><dd>toggle color mode</dd>
+        <dt>B</dt><dd>toggle block visibility</dd>
+      </dl>
+      <button onClick="(()=>isFlatColor != isFlatColor)()" ;>Color</button>
+    </div>
   </body>
 </html>

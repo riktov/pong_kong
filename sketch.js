@@ -25,17 +25,34 @@ let isShowBlocks = true ;
 let isRecording = true ;
 
 let img ; 
+let titleImg = null ;
+
+let imgOldBlockLand ;
+let imgOldBlockSea ;
+let canvasElt = null ;
+
+let numLand = 0 ;
 
 function setup() {
   // frameRate(15) ;
   let canvas = createCanvas(512, 512) ;
+  canvasElt = canvas.elt ;
   toBlockCenter = createVector(BLOCK_HALF_WIDTH, BLOCK_HALF_WIDTH) ;
 
+  titleImg = generateTitle() ;
+  
   // COLOR_LAND = color(0, 255, 0) ;
-  COLOR_SEA = color(63, 63, 255) ;
-
+  COLOR_SEA = color(63, 63, 255) ;  
 	COLOR_LAND = blockColor(TEAM_LAND, 8192) ;
+
   // COLOR_SEA = blockColor(TEAM_SEA, AGE_MAX) ;
+  imgOldBlockLand = createImage(BLOCK_WIDTH, BLOCK_WIDTH) ;
+  imgOldBlockSea = createImage(BLOCK_WIDTH, BLOCK_WIDTH) ;
+
+  drawSingleBlock(COLOR_LAND, 0, 0, imgOldBlockLand) ;
+  drawSingleBlock(COLOR_SEA, 0, 0, imgOldBlockSea) ;
+  imgOldBlockLand.updatePixels() ;
+  imgOldBlockSea.updatePixels() ;
 
   //initialize balls
   for(let i = 0 ; i < INITIAL_BALLS ; i++) {
@@ -43,12 +60,12 @@ function setup() {
       createVector(width / 2, height / 2), 
       createVector(2, 2), 
       TEAM_LAND,
-      color(255, 0, 0)) ;
+      color(255, 255, 0)) ;
     const seaBall = new Ball(
       createVector(width / 2, height / 2), 
       createVector(-2, -2), 
       TEAM_SEA,
-      color(255, 255, 0)) ;
+      color(255, 0, 0)) ;
     
 		//The coordinate is the center
 		// landBall.position = landBall.position.add(toBlockCenter) ;
@@ -63,9 +80,9 @@ function setup() {
     balls.push(seaBall) ;
   }
   
-  //randomize speed
+  //randomize heading
   balls.forEach(b => {
-    b.speed.setHeading(random(0, TWO_PI)) ;
+    b.speed.rotate(random(0, TWO_PI / 90)) ;
   }) ;
   
   //initialize grids
@@ -76,6 +93,7 @@ function setup() {
   
   //blocks = Array.from(Array(gridHeight), () => new Array(gridWidth).fill(TEAM_SEA)) ;
   img = createImage(width, height) ;
+  
   
   for(let row = 0 ; row < gridHeight ; row++) {
     blocks[row] = [] ;
@@ -106,25 +124,18 @@ function draw() {
 	if(isShowBalls) {
 		balls.forEach(b => {
 			fill(b.col) ;
-			rect(b.position.x - BLOCK_WIDTH / 2 , b.position.y - BLOCK_WIDTH / 2, BLOCK_WIDTH, BLOCK_WIDTH) ;
+			rect(b.position.x - BLOCK_HALF_WIDTH, b.position.y - BLOCK_HALF_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH) ;
 		}) ;
 	}
-	
-	// drawChangedBlocks() ;
+  
+  setFavicon(canvasElt) ;
+
 	advance() ;
 }
 
 function advance() {
-  // print(frameCount);
-  if(frameCount % 100 == 0) {
-    // print(frameCount, " frames") ;
-  }
-
   balls.forEach(b => {
     b.move() ;
-
-    // console.debug("Advance")
-
 
     if(b.position.x < 0) {
       b.position.x = 0;
@@ -170,6 +181,7 @@ function advance() {
         b.bounceY() ;
       }
       
+      //slightly shift direction so we don't get long drills
 			b.speed.rotate(random(PI / -90, PI / 90)) ;
 
 
@@ -207,6 +219,9 @@ function advance() {
 function drawAllBlocks() {
   const nrows = blocks.length ;
   const ncols = blocks[0].length ;
+  
+  loadPixels() ;
+
   for(let row = 0 ; row < nrows ; row++) {
     for(let col = 0 ; col < ncols ; col++) {
       const team = blocks[row][col] ;
@@ -215,25 +230,54 @@ function drawAllBlocks() {
 
 			if(isFlatColor) {
 	      colr = team == TEAM_LAND ? COLOR_LAND : COLOR_SEA ;
-			}
-			else {
+        // const blockImage = team == TEAM_LAND ? imgOldBlockLand : imgOldBlockSea ;
+        // image(blockImage, col * BLOCK_WIDTH, row * BLOCK_WIDTH) ;
+        drawSingleBlock(colr, col, row) ;
+			}	else {
 				const age = blockAges[row][col] ;
 
 				colr = blockColor(team, age) ;
+        drawSingleBlock(colr, col, row) ;
 			}
 
-			drawSingleBlock(colr, col, row) ;
     }
   }
   updatePixels() ;
 }
 
-function drawSingleBlock(colr, col, row) {
+function drawSingleBlockOnPixels(colr, col, row) {
+  const BYTES_PER_PIXEL = 4 ; //RBGA
+  const BYTES_PER_ROW = width * BYTES_PER_PIXEL ;
+
+  const startOffset = row * BYTES_PER_ROW + col * BYTES_PER_PIXEL
+
+  let runOffset = startOffset ;
+
+	for(let by = 0 ; by < BLOCK_WIDTH ; by++) {
+    for(let bx = 0 ; bx < BLOCK_WIDTH ; bx++) {
+      const pixelOffset = runOffset + (bx * BYTES_PER_PIXEL) ;
+      // pixels[pixelOffset] = 
+    }
+    runOffset += BYTES_PER_ROW ;
+  }  
+}
+
+function drawSingleBlock(colr, col, row, targetImg=null) {
+
 	for(let by = 0 ; by < BLOCK_WIDTH ; by++) {
 		for(let bx = 0 ; bx < BLOCK_WIDTH ; bx++) {
-			set(col * BLOCK_WIDTH + bx, row * BLOCK_WIDTH + by, colr) ;
+      const coordX = col * BLOCK_WIDTH + bx ;
+      const coordY = row * BLOCK_WIDTH + by ;
+
+      // const linOffset = row * BLOCK_WIDTH * 
+      if(targetImg) {
+        targetImg.set(col * BLOCK_WIDTH + bx, row * BLOCK_WIDTH + by, colr) ;
+      } else {
+        set(coordX, coordY, colr) ;
+      }
 		}
 	}
+
 }
 
 function drawChangedBlocks() {
@@ -296,17 +340,17 @@ function gridPos(ballPos) {
 /**
  * 
  * @param {*} team Land or Sea
- * @param {*} age 
+ * @param {*} age number
  * @returns 
  */
 function blockColor(team, age) {
 	var colr ;
 
-	const ageNorm = (age * 256) / AGE_LIMIT ;
+	const ageNorm = age / 2 ;
 	// const ageNorm = age ;
 	
 	if(team == TEAM_SEA) {
-		const bGreen = 63 + ((192 * (255 - ageNorm)) / 256) ;
+		const bGreen = 63 + (3 / 4 * (255 - ageNorm)) ; //255 ~ 0 
 		colr = color(63, bGreen, 255) ;
 	}
 
@@ -356,3 +400,42 @@ function keyPressed() {
     // saveGif('my-animation', 240, { units: 'frames' });
   }
 }
+
+function generateTitle() {
+  const titleImage = createImage(5 * 5 * 4, 2 * 5 * 4) ;
+
+  titleImage.loadPixels() ;
+
+  const colYellow = color('yellow') ;
+
+  const points = [] ;
+  /*
+  const points = [
+    [0, 0], [1, 0], [2, 0], [3, 0],
+    [0, 1],                 [3, 1],
+    [0, 2], [1, 2], [2, 2], [3, 2],
+    [0, 3],  
+    
+    [5, 0], [6, 0], [7, 0], [8, 0],
+    [5, 1],                 [8, 1],
+    [5, 2],                 [8, 2],
+    [5, 3], [6, 3], [7, 3], [8, 3],
+
+    [9, 0], [10, 0], [11, 0], [12, 0],
+    [9, 1],                 [12, 1],
+    [9, 2],                 [12, 2],
+    [9, 3], [10, 3], [11, 3], [12, 3],
+
+  ]
+  */
+
+  points.forEach( pt =>
+    drawSingleBlock(colYellow, pt[0], pt[1], titleImage) 
+  ) ;
+
+  titleImage.updatePixels() ;
+
+  return titleImage ;
+  
+}
+

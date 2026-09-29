@@ -10,6 +10,8 @@ class Ball {
   move() {
     this.position.x += this.speed.x ; 
     this.position.y += this.speed.y ; 
+    // this.speed.rotate(random(HALF_PI / -32, HALF_PI / 32)) ;
+    // this.speed.rotate(HALF_PI / 32) ;
   }
   
   bounceX() {
