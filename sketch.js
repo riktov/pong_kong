@@ -247,8 +247,9 @@ function drawAllBlocks() {
 }
 
 function drawSingleBlockOnPixels(rval, gval, bval, col, row) {
+  const PXD = pixelDensity() ;
   const BYTES_PER_PIXEL = 4 ; //RBGA
-  const BYTES_PER_ROW = width * BYTES_PER_PIXEL ;
+  const BYTES_PER_ROW = width * BYTES_PER_PIXEL * PXD;
 
   const blockOffset = row * width + col ;
   // const pixelOffset = blockOffset * BLOCK_WIDTH * BYTES_PER_PIXEL ;
@@ -256,13 +257,14 @@ function drawSingleBlockOnPixels(rval, gval, bval, col, row) {
   // the byte offset into pixels[] 
   let xRunOffset = blockOffset * BLOCK_WIDTH * BYTES_PER_PIXEL ;
   
-	for(let by = 0 ; by < BLOCK_WIDTH ; by++) {
-    for(let bx = 0 ; bx < BLOCK_WIDTH ; bx++) {
+
+	for(let by = 0 ; by < BLOCK_WIDTH * PXD; by++) {
+    for(let bx = 0 ; bx < BLOCK_WIDTH * PXD; bx++) {
       const pixelOffset = xRunOffset + (bx * BYTES_PER_PIXEL);
-      pixels[pixelOffset + 3] = rval ;
-      pixels[pixelOffset + 2] = gval ;
-      pixels[pixelOffset + 1] = bval ;
-      pixels[pixelOffset + 0] = 255 ;
+      pixels[pixelOffset + 0] = rval ;
+      pixels[pixelOffset + 1] = gval ;
+      pixels[pixelOffset + 2] = bval ;
+      pixels[pixelOffset + 3] = 255 ;
     }
     xRunOffset += BYTES_PER_ROW;
   }  
