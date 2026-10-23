@@ -266,7 +266,7 @@ function drawSingleBlockOnPixels(rval, gval, bval, col, row) {
       pixels[pixelOffset + 2] = bval ;
       pixels[pixelOffset + 3] = 255 ;
     }
-    xRunOffset += BYTES_PER_ROW;
+    xRunOffset += BYTES_PER_ROW * PXD;
   }  
 }
 
