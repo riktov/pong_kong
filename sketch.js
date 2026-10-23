@@ -230,35 +230,41 @@ function drawAllBlocks() {
 
 			if(isFlatColor) {
 	      colr = team == TEAM_LAND ? COLOR_LAND : COLOR_SEA ;
-        // const blockImage = team == TEAM_LAND ? imgOldBlockLand : imgOldBlockSea ;
-        // image(blockImage, col * BLOCK_WIDTH, row * BLOCK_WIDTH) ;
-        drawSingleBlock(colr, col, row) ;
 			}	else {
 				const age = blockAges[row][col] ;
-
 				colr = blockColor(team, age) ;
-        drawSingleBlock(colr, col, row) ;
 			}
+
+      const rval = red(colr) ;
+      const gval = green(colr) ;
+      const bval = blue(colr) ;
+
+      drawSingleBlockOnPixels(rval, gval, bval, col, row) ;
 
     }
   }
   updatePixels() ;
 }
 
-function drawSingleBlockOnPixels(colr, col, row) {
+function drawSingleBlockOnPixels(rval, gval, bval, col, row) {
   const BYTES_PER_PIXEL = 4 ; //RBGA
   const BYTES_PER_ROW = width * BYTES_PER_PIXEL ;
 
-  const startOffset = row * BYTES_PER_ROW + col * BYTES_PER_PIXEL
+  const blockOffset = row * width + col ;
+  // const pixelOffset = blockOffset * BLOCK_WIDTH * BYTES_PER_PIXEL ;
 
-  let runOffset = startOffset ;
-
+  // the byte offset into pixels[] 
+  let xRunOffset = blockOffset * BLOCK_WIDTH * BYTES_PER_PIXEL ;
+  
 	for(let by = 0 ; by < BLOCK_WIDTH ; by++) {
     for(let bx = 0 ; bx < BLOCK_WIDTH ; bx++) {
-      const pixelOffset = runOffset + (bx * BYTES_PER_PIXEL) ;
-      // pixels[pixelOffset] = 
+      const pixelOffset = xRunOffset + (bx * BYTES_PER_PIXEL);
+      pixels[pixelOffset + 0] = rval ;
+      pixels[pixelOffset + 1] = gval ;
+      pixels[pixelOffset + 2] = bval ;
+      pixels[pixelOffset + 3] = 255 ;
     }
-    runOffset += BYTES_PER_ROW ;
+    xRunOffset += BYTES_PER_ROW;
   }  
 }
 
@@ -266,14 +272,14 @@ function drawSingleBlock(colr, col, row, targetImg=null) {
 
 	for(let by = 0 ; by < BLOCK_WIDTH ; by++) {
 		for(let bx = 0 ; bx < BLOCK_WIDTH ; bx++) {
-      const coordX = col * BLOCK_WIDTH + bx ;
-      const coordY = row * BLOCK_WIDTH + by ;
+      const pixelX = col * BLOCK_WIDTH + bx ;
+      const pixelY = row * BLOCK_WIDTH + by ;
 
       // const linOffset = row * BLOCK_WIDTH * 
       if(targetImg) {
-        targetImg.set(col * BLOCK_WIDTH + bx, row * BLOCK_WIDTH + by, colr) ;
+        targetImg.set(pixelX, pixelY, colr) ;
       } else {
-        set(coordX, coordY, colr) ;
+        set(pixelX, pixelY, colr) ;
       }
 		}
 	}
