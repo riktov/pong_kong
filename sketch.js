@@ -259,10 +259,10 @@ function drawSingleBlockOnPixels(rval, gval, bval, col, row) {
 	for(let by = 0 ; by < BLOCK_WIDTH ; by++) {
     for(let bx = 0 ; bx < BLOCK_WIDTH ; bx++) {
       const pixelOffset = xRunOffset + (bx * BYTES_PER_PIXEL);
-      pixels[pixelOffset + 0] = rval ;
-      pixels[pixelOffset + 1] = gval ;
-      pixels[pixelOffset + 2] = bval ;
-      pixels[pixelOffset + 3] = 255 ;
+      pixels[pixelOffset + 3] = rval ;
+      pixels[pixelOffset + 2] = gval ;
+      pixels[pixelOffset + 1] = bval ;
+      pixels[pixelOffset + 0] = 255 ;
     }
     xRunOffset += BYTES_PER_ROW;
   }  
