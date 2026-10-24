@@ -130,6 +130,7 @@ function draw() {
   
   setFavicon(canvasElt) ;
 
+  // text(pixelDensity().toString(), 100, 100) ;
 	advance() ;
 }
 
@@ -249,24 +250,23 @@ function drawAllBlocks() {
 function drawSingleBlockOnPixels(rval, gval, bval, col, row) {
   const PXD = pixelDensity() ;
   const BYTES_PER_PIXEL = 4 ; //RBGA
-  const BYTES_PER_ROW = width * BYTES_PER_PIXEL * PXD;
+  const BYTES_PER_ROW = width * BYTES_PER_PIXEL * PXD ;
 
   const blockOffset = row * width + col ;
-  // const pixelOffset = blockOffset * BLOCK_WIDTH * BYTES_PER_PIXEL ;
 
   // the byte offset into pixels[] 
   let xRunOffset = blockOffset * BLOCK_WIDTH * BYTES_PER_PIXEL ;
   
 
-	for(let by = 0 ; by < BLOCK_WIDTH * PXD; by++) {
-    for(let bx = 0 ; bx < BLOCK_WIDTH * PXD; bx++) {
+	for(let by = 0 ; by < BLOCK_WIDTH * PXD ; by++) {
+    for(let bx = 0 ; bx < BLOCK_WIDTH * PXD ; bx++) {
       const pixelOffset = xRunOffset + (bx * BYTES_PER_PIXEL);
       pixels[pixelOffset + 0] = rval ;
       pixels[pixelOffset + 1] = gval ;
       pixels[pixelOffset + 2] = bval ;
       pixels[pixelOffset + 3] = 255 ;
     }
-    xRunOffset += BYTES_PER_ROW * PXD;
+    xRunOffset += BYTES_PER_ROW ;
   }  
 }
 
@@ -447,3 +447,42 @@ function generateTitle() {
   
 }
 
+
+
+//let pixels: number[]
+
+//Uint8ClampedArray containing the values for all the pixels in the display window. 
+// These values are numbers. 
+// This array is the size (include an appropriate factor for pixelDensity) of the display window x4, 
+// representing the R, G, B, A values in order for each pixel,
+//  moving from left to right across each row, then down each column. 
+// Retina and other high density displays will have more pixels[] (by a factor of pixelDensity^2). 
+// For example, if the image is 100x100 pixels, there will be 40,000. 
+// On a retina display, there will be 160,000. 
+// The first four values (indices 0-3) in the array will be the R, G, B, A values of the pixel at (0, 0). 
+// The second four values (indices 4-7) will contain the R, G, B, A values of the pixel at (1, 0). 
+// More generally, to set values for a pixel at (x, y):
+
+let d = pixelDensity(); 
+
+for (let i = 0; i < d; i++) { 
+  for (let j = 0; j < d; j++) {
+     //loop over 
+     const index = 4 * ((y * d + j) * width * d + (x * d + i)); 
+     pixels[index] = r; 
+     pixels[index+1] = g; 
+     pixels[index+2] = b; 
+     pixels[index+3] = a; 
+  } 
+}
+
+//While the above method is complex, it is flexible enough to work with any pixelDensity. 
+// Note that set() will automatically take care of setting all the appropriate values in 
+// pixels[] for a given (x, y) at any pixelDensity, 
+// but the performance may not be as fast when lots of modifications are made to the pixel array.
+
+//Before accessing this array, the data must loaded with the loadPixels() function. 
+// After the array data has been modified, the updatePixels() function must be run to update the changes.
+
+//Note that this is not a standard javascript array. 
+// This means that standard javascript functions such as slice() or arrayCopy() do not work.
