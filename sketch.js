@@ -58,12 +58,12 @@ function setup() {
   for(let i = 0 ; i < INITIAL_BALLS ; i++) {
     const landBall = new Ball(
       createVector(width / 2, height / 2), 
-      createVector(2, 2), 
+      createVector(random([-2, 2]), random([-2, 2])), 
       TEAM_LAND,
       color(255, 255, 0)) ;
     const seaBall = new Ball(
       createVector(width / 2, height / 2), 
-      createVector(-2, -2), 
+      createVector(random([-2, 2]), random([-2, 2])), 
       TEAM_SEA,
       color(255, 0, 0)) ;
     
