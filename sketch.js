@@ -33,6 +33,8 @@ let canvasElt = null ;
 
 let numLand = 0 ;
 
+let isShouldDraw = true ;
+
 function setup() {
   // frameRate(15) ;
   let canvas = createCanvas(512, 512) ;
@@ -112,32 +114,36 @@ function setup() {
 
 
 function draw() {
-	background(127) ;
-
-	fill(255) ;
-	noStroke() ;
-
-  if(isShowBlocks) {
-    drawAllBlocks() ;
-  }
-	
-	if(isShowBalls) {
-		balls.forEach(b => {
-			fill(b.col) ;
-			rect(b.position.x - BLOCK_HALF_WIDTH, b.position.y - BLOCK_HALF_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH) ;
-		}) ;
-	}
+  if(true) {
+    background(127) ;
   
-  setFavicon(canvasElt) ;
+    fill(255) ;
+    noStroke() ;
+  
+    if(isShowBlocks) {
+      drawAllBlocks() ;
+    }
+  
+    
+    if(isShowBalls) {
+      balls.forEach(b => {
+        fill(b.col) ;
+        rect(b.position.x - BLOCK_HALF_WIDTH, b.position.y - BLOCK_HALF_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH) ;
+      }) ;
+    }
+    
+    setFavicon(canvasElt) ;
+  }
 
   // text(pixelDensity().toString(), 100, 100) ;
-	advance() ;
+	isShouldDraw = advance() ;
 }
 
 function advance() {
+  
   balls.forEach(b => {
     b.move() ;
-
+    
     if(b.position.x < 0) {
       b.position.x = 0;
       b.bounceX() ;
@@ -147,7 +153,7 @@ function advance() {
       b.position.x = width - BLOCK_WIDTH;
       b.bounceX() ;
     }
-
+    
     if(b.position.y < 0) {
       b.position.y = 0 ;
       b.bounceY() ;
@@ -157,14 +163,17 @@ function advance() {
       b.position.y = height - BLOCK_WIDTH;
       b.bounceY() ;
     }
-
+    
     //hit blocks
     
     const [gx, gy] = gridPos(b.position) ;
-
+    
     let bl = blocks[gy][gx] ;    
-        
+    
+    
+    let isAnyBlockChanged = false ;
     if(bl == b.team) {
+      isAnyBlockChanged = true ;
       blocks[gy][gx] = (b.team + 1) % 2  ;
 
 			blockAges[gy][gx] = 0 ;
@@ -185,9 +194,6 @@ function advance() {
       //slightly shift direction so we don't get long drills
 			b.speed.rotate(random(PI / -90, PI / 90)) ;
 
-
-
-
 			let colr ;
 
 			const team = blocks[gy][gx] ;
@@ -206,6 +212,7 @@ function advance() {
     } 
 		
 		// print(blockColor(TEAM_LAND, frameCount));
+    return isAnyBlockChanged ;
   }) ;
 
 
