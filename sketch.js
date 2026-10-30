@@ -136,13 +136,16 @@ function draw() {
   }
 
   // text(pixelDensity().toString(), 100, 100) ;
-	isShouldDraw = advance() ;
+  while(!advance()) {}
+	// isShouldDraw = advance() ;
 }
 
 function advance() {
-  
-  balls.forEach(b => { b.move() ; }
+  let isAnyBlockChanged = false ;
+
+  balls.forEach(b => { b.move() ; }) ;
     
+  balls.forEach(b => {
     if(b.position.x < 0) {
       b.position.x = 0;
       b.bounceX() ;
@@ -169,8 +172,6 @@ function advance() {
     
     let bl = blocks[gy][gx] ;    
     
-
-    let isAnyBlockChanged = false ;
     if(bl == b.team) {
       isAnyBlockChanged = true ;
       blocks[gy][gx] = (b.team + 1) % 2  ;
@@ -211,16 +212,17 @@ function advance() {
     } 
 		
 		// print(blockColor(TEAM_LAND, frameCount));
-    return isAnyBlockChanged ;
   }) ;
-
-
+  
+  
 	for(let row = 0 ; row < blocks.length ; row++) {
     for(let col = 0 ; col < blocks[0].length ; col++) {
       const age = blockAges[row][col] + 1 ;
       blockAges[row][col] = age ;      
     }
   }
+
+  return isAnyBlockChanged ;
 }
 
 function drawAllBlocks() {
