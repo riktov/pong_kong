@@ -23,6 +23,7 @@ let isFlatColor = false ;
 let isShowBalls = true ;
 let isShowBlocks = true ;
 let isRecording = true ;
+let isFastLoop = true ;
 
 let img ; 
 let titleImg = null ;
@@ -136,7 +137,17 @@ function draw() {
   }
 
   // text(pixelDensity().toString(), 100, 100) ;
-  while(!advance()) {}
+
+  let skippedLoops = 0 ;
+  if(isFastLoop) {
+    while(!advance()) {
+      skippedLoops++ ;
+    }
+  } else {
+    advance() ;
+  }
+
+  // print("skipped loops:", skippedLoops) ;
 	// isShouldDraw = advance() ;
 }
 
@@ -455,3 +466,4 @@ function generateTitle() {
 
 function toggleFlatColor() { isFlatColor = !isFlatColor ; }
 function toggleShowBalls() { isShowBalls = !isShowBalls ; }
+function toggleSkipLoops() { isFastLoop = ! isFastLoop ;}
