@@ -141,8 +141,7 @@ function draw() {
 
 function advance() {
   
-  balls.forEach(b => {
-    b.move() ;
+  balls.forEach(b => { b.move() ; }
     
     if(b.position.x < 0) {
       b.position.x = 0;
@@ -170,7 +169,7 @@ function advance() {
     
     let bl = blocks[gy][gx] ;    
     
-    
+
     let isAnyBlockChanged = false ;
     if(bl == b.team) {
       isAnyBlockChanged = true ;
